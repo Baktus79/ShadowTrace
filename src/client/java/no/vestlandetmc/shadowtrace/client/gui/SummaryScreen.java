@@ -7,6 +7,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import no.vestlandetmc.shadowtrace.client.handlers.Block;
@@ -20,14 +21,14 @@ public class SummaryScreen extends Screen {
 	private ButtonWidget btnReset;
 
 	public SummaryScreen() {
-		super(Text.of("Blokksammendrag"));
+		super(Text.translatable("shadowtrace.screen.summary.title"));
 	}
 
 	@Override
 	public void init() {
 		super.init();
 
-		btnReset = ButtonWidget.builder(Text.of("Resett Blokker"), (btn) -> {
+		btnReset = ButtonWidget.builder(Text.translatable("shadowtrace.screen.summary.btn_reset_blocks"), (btn) -> {
 			MinecraftClient.getInstance().setScreen(null);
 			DataManager.clearBlocks();
 		}).dimensions(-100, -100, 120, 18).build();
@@ -35,7 +36,7 @@ public class SummaryScreen extends Screen {
 
 		buttonWidgets.clear();
 		for (String blockName : DataManager.getBlocks().keySet()) {
-			final ButtonWidget buttonWidget = ButtonWidget.builder(Text.of("Blokker"), (btn) -> {
+			final ButtonWidget buttonWidget = ButtonWidget.builder(Text.translatable("shadowtrace.screen.summary.btn_blocks"), (btn) -> {
 				final Screen currentScreen = MinecraftClient.getInstance().currentScreen;
 				client.setScreen(new BlockScreen(blockName, currentScreen));
 			}).dimensions(-100, -100, 60, 18).build();
@@ -53,19 +54,21 @@ public class SummaryScreen extends Screen {
 		final int startX = centerX - tableWidth / 2;
 		final int startY = 20;
 
-		final String noData = "Ingen data er tilgjengelig.";
-		final int centerTextX = centerX - (textRenderer.getWidth(noData) / 2);
+		final MutableText noDataTxt = Text.translatable("shadowtrace.screen.summary.no_data");
+		final MutableText itemTxt = Text.translatable("shadowtrace.screen.summary.item");
+		final MutableText minedTxt = Text.translatable("shadowtrace.screen.summary.mined");
+		
+		final int centerTextX = centerX - (textRenderer.getWidth(noDataTxt) / 2);
 
 		if (DataManager.getBlocks().isEmpty()) {
-			context.drawText(this.textRenderer, noData, centerTextX, startY, 0xFF0000, true);
+			context.drawText(this.textRenderer, noDataTxt, centerTextX, startY, 0xFF0000, true);
 		} else {
-
 			final List<String> sortedBlockNames = new ArrayList<>(DataManager.getBlocks().keySet());
 			Collections.sort(sortedBlockNames);
 
 			btnReset.setPosition(startX + tableWidth - 122, startY - 8);
-			context.drawText(this.textRenderer, "Item", startX, startY, 0xFFFFFF, true);
-			context.drawText(this.textRenderer, "Ødelagt", startX + 260, startY, 0xFFFFFF, true);
+			context.drawText(this.textRenderer, itemTxt, startX, startY, 0xFFFFFF, true);
+			context.drawText(this.textRenderer, minedTxt, startX + 260, startY, 0xFFFFFF, true);
 
 			int yOffset = 20;
 			int textHeight = this.textRenderer.fontHeight;

@@ -39,33 +39,31 @@ public class ShadowtraceClient implements ClientModInitializer {
 		});
 
 		PayloadTypeRegistry.playS2C().register(ReceiveBlockData.ID, ReceiveBlockData.CODEC);
-		ClientPlayNetworking.registerGlobalReceiver(ReceiveBlockData.ID, (payload, context) -> {
-			context.client().execute(() -> {
-				DataManager.clearBlocks();
+		ClientPlayNetworking.registerGlobalReceiver(ReceiveBlockData.ID, (payload, context) -> context.client().execute(() -> {
+			DataManager.clearBlocks();
 
-				for (String data : payload.data()) {
-					final String[] blockData = data.split(":");
-					final String world = blockData[0];
-					final int locX = Integer.parseInt(blockData[1]);
-					final int locY = Integer.parseInt(blockData[2]);
-					final int locZ = Integer.parseInt(blockData[3]);
-					final String name = blockData[4];
-					final long timestamp = Long.parseLong(blockData[5]);
-					final Colors color = Colors.valueOf(name);
-					final BlockPos blockPos = new BlockPos(locX, locY, locZ);
-					final Block block;
+			for (String data : payload.data()) {
+				final String[] blockData = data.split(":");
+				final String world = getDisplayWorldName(blockData[0]);
+				final int locX = Integer.parseInt(blockData[1]);
+				final int locY = Integer.parseInt(blockData[2]);
+				final int locZ = Integer.parseInt(blockData[3]);
+				final String name = blockData[4];
+				final long timestamp = Long.parseLong(blockData[5]);
+				final Colors color = Colors.fromStringOrDefault(name);
+				final BlockPos blockPos = new BlockPos(locX, locY, locZ);
+				final Block block;
 
-					if (DataManager.hasBlock(name)) {
-						block = DataManager.getBlock(name);
-						block.addBlockPos(blockPos, timestamp);
-					} else {
-						block = new Block(world, name, color);
-						block.addBlockPos(blockPos, timestamp);
-						DataManager.addBlock(name, block);
-					}
+				if (DataManager.hasBlock(name)) {
+					block = DataManager.getBlock(name);
+					block.addBlockPos(blockPos, timestamp);
+				} else {
+					block = new Block(world, name, color);
+					block.addBlockPos(blockPos, timestamp);
+					DataManager.addBlock(name, block);
 				}
-			});
-		});
+			}
+		}));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (client != null && client.world != null) {
@@ -77,7 +75,7 @@ public class ShadowtraceClient implements ClientModInitializer {
 		});
 
 		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-				"Blokksammendrag",
+				"shadowtrace.keybind",
 				InputUtil.Type.KEYSYM,
 				GLFW.GLFW_KEY_G,
 				"ShadowTrace"));
@@ -87,5 +85,14 @@ public class ShadowtraceClient implements ClientModInitializer {
 				MinecraftClient.getInstance().setScreen(new SummaryScreen());
 			}
 		});
+	}
+
+	private String getDisplayWorldName(String id) {
+		return switch (id) {
+			case "world_nether" -> "Nether";
+			case "world_the_end" -> "The End";
+			case "world" -> "Overworld";
+			default -> id;
+		};
 	}
 }

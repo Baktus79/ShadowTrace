@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import no.vestlandetmc.shadowtrace.client.handlers.Block;
@@ -28,7 +29,7 @@ public class BlockScreen extends Screen {
 	private int scrollOffset = 0;
 
 	public BlockScreen(String blockName, Screen parent) {
-		super(Text.of("Blokker"));
+		super(Text.translatable("shadowtrace.screen.blockdata.title"));
 		this.blockName = blockName;
 		this.parent = parent;
 	}
@@ -48,9 +49,8 @@ public class BlockScreen extends Screen {
 		buttonWidgets.clear();
 		for (BlockPos blockPos : block.getBlockPositions().keySet()) {
 			if (blockPos == null || blockPos.equals(BlockPos.ORIGIN)) continue;
-			ButtonWidget buttonWidget = ButtonWidget.builder(Text.of("Teleport"), (btn) -> {
-				teleport(blockPos);
-			}).dimensions(-100, -100, 60, 18).build();
+			ButtonWidget buttonWidget = ButtonWidget.builder(Text.translatable("shadowtrace.screen.blockdata.teleport"),
+					(btn) -> teleport(blockPos)).dimensions(-100, -100, 60, 18).build();
 			buttonWidgets.put(blockPos, buttonWidget);
 			this.addDrawableChild(buttonWidget);
 		}
@@ -65,8 +65,8 @@ public class BlockScreen extends Screen {
 		final int startX = centerX - tableWidth / 2;
 		final int startY = 20;
 
-		context.drawText(this.textRenderer, "Tid", startX, startY, 0xFFFFFF, true);
-		context.drawText(this.textRenderer, "Koordinater", startX + 130, startY, 0xFFFFFF, true);
+		context.drawText(this.textRenderer, Text.translatable("shadowtrace.screen.blockdata.time"), startX, startY, 0xFFFFFF, true);
+		context.drawText(this.textRenderer, Text.translatable("shadowtrace.screen.blockdata.coordinate"), startX + 130, startY, 0xFFFFFF, true);
 
 		int yOffset = 20;
 		int textHeight = this.textRenderer.fontHeight;
@@ -81,7 +81,13 @@ public class BlockScreen extends Screen {
 			final BlockPos blockPos = entry.getKey();
 
 			if (y > startY && y < this.height - ROW_HEIGHT) {
-				final String coordinate = "Verden: " + block.getWorld() + " X:" + blockPos.getX() + " Y:" + blockPos.getY() + " Z:" + blockPos.getZ();
+				final MutableText coordinate = Text.translatable(
+						"shadowtrace.screen.blockdata.world",
+						block.getWorld(),
+						blockPos.getX(),
+						blockPos.getY(),
+						blockPos.getZ());
+
 				final String time = convertTimestamp(entry.getValue());
 
 				final boolean isHovered = mouseX >= startX - 2 && mouseX <= startX + tableWidth &&
@@ -123,7 +129,7 @@ public class BlockScreen extends Screen {
 	}
 
 	public String convertTimestamp(long timestamp) {
-		final ZoneId zoneId = ZoneId.of("Europe/Oslo");
+		final ZoneId zoneId = ZoneId.systemDefault();
 		final ZonedDateTime dateTime = Instant.ofEpochSecond(timestamp).atZone(zoneId);
 		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
 		return dateTime.format(formatter);
@@ -133,7 +139,7 @@ public class BlockScreen extends Screen {
 		final MinecraftClient client = MinecraftClient.getInstance();
 
 		if (client != null && client.player != null) {
-			final String teleportCommand = "cmi tppos " + blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ() + " -s";
+			final String teleportCommand = "shadowtrace teleport " + blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ();
 			client.player.networkHandler.sendCommand(teleportCommand);
 		}
 	}

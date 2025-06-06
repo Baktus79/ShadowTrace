@@ -1,0 +1,14 @@
+{
+  "shadowtrace.keybind": "Block Summary",
+  "shadowtrace.screen.summary.title": "Block Summary",
+  "shadowtrace.screen.summary.btn_reset_blocks": "Reset Blocks",
+  "shadowtrace.screen.summary.btn_blocks": "Blocks",
+  "shadowtrace.screen.summary.no_data": "No data available.",
+  "shadowtrace.screen.summary.item": "Item",
+  "shadowtrace.screen.summary.mined": "Mined",
+  "shadowtrace.screen.blockdata.title": "Blocks",
+  "shadowtrace.screen.blockdata.teleport": "Teleport",
+  "shadowtrace.screen.blockdata.time": "Time",
+  "shadowtrace.screen.blockdata.coordinate": "Coordinate",
+  "shadowtrace.screen.blockdata.world": "World: %1$s X:%2$d Y:%3$d Z:%4$d"
+}

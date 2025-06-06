@@ -18,12 +18,22 @@ public enum Colors {
 	DEEPSLATE_IRON_ORE(0xffe9c0a4),
 	DEEPSLATE_REDSTONE_ORE(0xffff0000),
 	ANCIENT_DEBRIS(0xff851b00),
-	NETHER_GOLD_ORE(0xffffaa00);
+	NETHER_GOLD_ORE(0xffffaa00),
+	SPAWNER(0xff9900ff),
+	DEFAULT(0xffff00ff);
 
 	private final int hex;
 
 	Colors(int hex) {
 		this.hex = hex;
+	}
+
+	public static Colors fromStringOrDefault(String name) {
+		try {
+			return Colors.valueOf(name.toUpperCase());
+		} catch (IllegalArgumentException | NullPointerException e) {
+			return Colors.DEFAULT;
+		}
 	}
 
 	public int getHexCode() {

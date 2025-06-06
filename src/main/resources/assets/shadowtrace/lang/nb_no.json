@@ -1,0 +1,14 @@
+{
+  "shadowtrace.keybind": "Blokksammendrag",
+  "shadowtrace.screen.summary.title": "Blokksammendrag",
+  "shadowtrace.screen.summary.btn_reset_blocks": "Resett blokker",
+  "shadowtrace.screen.summary.btn_blocks": "Blokker",
+  "shadowtrace.screen.summary.no_data": "Ingen data er tilgjengelig.",
+  "shadowtrace.screen.summary.item": "Item",
+  "shadowtrace.screen.summary.mined": "Ødelagt",
+  "shadowtrace.screen.blockdata.title": "Blokker",
+  "shadowtrace.screen.blockdata.teleport": "Teleport",
+  "shadowtrace.screen.blockdata.time": "Tid",
+  "shadowtrace.screen.blockdata.coordinate": "Koordinat",
+  "shadowtrace.screen.blockdata.world": "Verden: %1$s X:%2$d Y:%3$d Z:%4$d"
+}

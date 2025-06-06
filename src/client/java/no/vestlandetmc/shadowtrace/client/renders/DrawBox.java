@@ -1,9 +1,11 @@
 package no.vestlandetmc.shadowtrace.client.renders;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -23,19 +25,14 @@ public class DrawBox {
 
 		final Camera camera = client.gameRenderer.getCamera();
 		final Vec3d cameraPos = camera.getPos();
-		final Tessellator tessellator = Tessellator.getInstance();
-		final BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
-		final Matrix4f matrix = matrixStack.peek().getPositionMatrix();
 
-		RenderSystem.depthMask(false);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.disableCull();
-		RenderSystem.disableDepthTest();
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-		GL11.glEnable(GL11.GL_LINE_SMOOTH);
+		VertexConsumerProvider.Immediate consumers = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+		RenderLayer layer = RenderLayer.getLines();
+		VertexConsumer consumer = consumers.getBuffer(layer);
 
-		matrixStack.push();
+		GL11.glDepthMask(false);
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		for (Map.Entry<String, Block> s : DataManager.getBlocks().entrySet()) {
 			final int color = s.getValue().getColor().getHexCode();
@@ -46,48 +43,46 @@ public class DrawBox {
 				final double y = e.getKey().getY() - cameraPos.y;
 				final double z = e.getKey().getZ() - cameraPos.z;
 				final Box bb = new Box(x, y, z, x + 1, y + 1, z + 1);
-				matrixStack.translate(bb.minX - camera.getPos().x, bb.minY - camera.getPos().y, bb.minZ - camera.getPos().z);
-				drawOutlineBox(matrix, bufferBuilder, bb, color);
+
+				drawOutlineBox(matrixStack, consumer, bb, color);
 			});
 		}
 
-		try {
-			BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-		} catch (Exception ignored) {
+		consumers.draw();
 
-		}
-
-		RenderSystem.depthMask(true);
-		RenderSystem.enableDepthTest();
-		RenderSystem.disableBlend();
-		RenderSystem.enableCull();
-		GL11.glDisable(GL11.GL_LINE_SMOOTH);
-		matrixStack.pop();
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glDepthMask(true);
 	}
 
-	private static void drawOutlineBox(Matrix4f matrix, BufferBuilder bufferBuilder, Box bb, int color) {
-		drawLine(bufferBuilder, matrix, bb.minX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.minZ, color);
-		drawLine(bufferBuilder, matrix, bb.maxX, bb.minY, bb.minZ, bb.maxX, bb.minY, bb.maxZ, color);
+	private static void drawOutlineBox(MatrixStack matrices, VertexConsumer consumer, Box box, int color) {
+		Matrix4f matrix = matrices.peek().getPositionMatrix();
 
-		drawLine(bufferBuilder, matrix, bb.maxX, bb.minY, bb.maxZ, bb.minX, bb.minY, bb.maxZ, color);
-		drawLine(bufferBuilder, matrix, bb.minX, bb.minY, bb.maxZ, bb.minX, bb.minY, bb.minZ, color);
+		// Bunn (4 linjer)
+		drawLine(matrix, consumer, box.minX, box.minY, box.minZ, box.maxX, box.minY, box.minZ, color);
+		drawLine(matrix, consumer, box.maxX, box.minY, box.minZ, box.maxX, box.minY, box.maxZ, color);
+		drawLine(matrix, consumer, box.maxX, box.minY, box.maxZ, box.minX, box.minY, box.maxZ, color);
+		drawLine(matrix, consumer, box.minX, box.minY, box.maxZ, box.minX, box.minY, box.minZ, color);
 
-		drawLine(bufferBuilder, matrix, bb.minX, bb.maxY, bb.minZ, bb.maxX, bb.maxY, bb.minZ, color);
-		drawLine(bufferBuilder, matrix, bb.maxX, bb.maxY, bb.minZ, bb.maxX, bb.maxY, bb.maxZ, color);
+		// Topp (4 linjer)
+		drawLine(matrix, consumer, box.minX, box.maxY, box.minZ, box.maxX, box.maxY, box.minZ, color);
+		drawLine(matrix, consumer, box.maxX, box.maxY, box.minZ, box.maxX, box.maxY, box.maxZ, color);
+		drawLine(matrix, consumer, box.maxX, box.maxY, box.maxZ, box.minX, box.maxY, box.maxZ, color);
+		drawLine(matrix, consumer, box.minX, box.maxY, box.maxZ, box.minX, box.maxY, box.minZ, color);
 
-		drawLine(bufferBuilder, matrix, bb.maxX, bb.maxY, bb.maxZ, bb.minX, bb.maxY, bb.maxZ, color);
-		drawLine(bufferBuilder, matrix, bb.minX, bb.maxY, bb.maxZ, bb.minX, bb.maxY, bb.minZ, color);
-
-		drawLine(bufferBuilder, matrix, bb.minX, bb.minY, bb.minZ, bb.minX, bb.maxY, bb.minZ, color);
-		drawLine(bufferBuilder, matrix, bb.maxX, bb.minY, bb.minZ, bb.maxX, bb.maxY, bb.minZ, color);
-
-		drawLine(bufferBuilder, matrix, bb.maxX, bb.minY, bb.maxZ, bb.maxX, bb.maxY, bb.maxZ, color);
-		drawLine(bufferBuilder, matrix, bb.minX, bb.minY, bb.maxZ, bb.minX, bb.maxY, bb.maxZ, color);
+		// Hjørner (4 linjer)
+		drawLine(matrix, consumer, box.minX, box.minY, box.minZ, box.minX, box.maxY, box.minZ, color);
+		drawLine(matrix, consumer, box.maxX, box.minY, box.minZ, box.maxX, box.maxY, box.minZ, color);
+		drawLine(matrix, consumer, box.maxX, box.minY, box.maxZ, box.maxX, box.maxY, box.maxZ, color);
+		drawLine(matrix, consumer, box.minX, box.minY, box.maxZ, box.minX, box.maxY, box.maxZ, color);
 	}
 
-	private static void drawLine(BufferBuilder bufferBuilder, Matrix4f matrix, double x1, double y1, double z1, double x2, double y2, double z2, int color) {
-		bufferBuilder.vertex(matrix, (float) x1, (float) y1, (float) z1).color(color);
-		bufferBuilder.vertex(matrix, (float) x2, (float) y2, (float) z2).color(color);
+	private static void drawLine(Matrix4f matrix, VertexConsumer consumer,
+								 double x1, double y1, double z1,
+								 double x2, double y2, double z2,
+								 int color) {
+		consumer.vertex(matrix, (float) x1, (float) y1, (float) z1).color(color).normal(0f, 1f, 0f);
+		consumer.vertex(matrix, (float) x2, (float) y2, (float) z2).color(color).normal(0f, 1f, 0f);
 	}
 
 	private static boolean isInsideSquare(BlockPos blockPos, ClientPlayerEntity player) {
