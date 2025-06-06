@@ -1,0 +1,37 @@
+name: Bug Report
+description: Create a bug report to help us improve.
+labels: bug report
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This page is intended to help us resolve issues with ShadowTrace as quickly and efficiently as possible.
+        Please take a moment to fill out this form thoroughly and accurately.
+        **Note**: If you are experiencing multiple unrelated issues, consider creating a separate report for each one.
+  - type: textarea
+    id: description-of-issue
+    attributes:
+      label: Description of Issue
+      description: |
+        A clear and concise description of what the issue is.
+    validations:
+      required: true
+  - type: textarea
+    id: cmi-version
+    attributes:
+      label: Version Information
+      description: Please provide us with the version for ShadowTrace, Fabric Loader and Minecraft.
+      placeholder: |
+        ShadowTrace: 1.0.4
+        Fabric Loader: 0.16.14
+        Minecraft: 1.21.5
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: console-errors
+    attributes:
+      label: Errors
+      description: If they are too big consider providing a pastebin link.
+      placeholder: Paste any errors you have in here.
+      render: shell
