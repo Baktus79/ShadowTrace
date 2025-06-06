@@ -5,8 +5,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        This page is intended to help us resolve issues with ShadowTrace as quickly and efficiently as possible.
-        Please take a moment to fill out this form thoroughly and accurately.
+        This page is intended to help us resolve issues with ShadowTrace as quickly and efficiently as possible. Please take a moment to fill out this form thoroughly and accurately.
+        
         **Note**: If you are experiencing multiple unrelated issues, consider creating a separate report for each one.
   - type: textarea
     id: description-of-issue
@@ -17,7 +17,7 @@ body:
     validations:
       required: true
   - type: textarea
-    id: cmi-version
+    id: plugin-version
     attributes:
       label: Version Information
       description: Please provide us with the version for ShadowTrace, Fabric Loader and Minecraft.
