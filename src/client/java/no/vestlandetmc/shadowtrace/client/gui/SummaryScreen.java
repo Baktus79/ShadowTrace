@@ -47,28 +47,27 @@ public class SummaryScreen extends Screen {
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-		super.render(context, mouseX, mouseY, delta);
-
 		final int centerX = this.width / 2;
 		final int tableWidth = 580;
 		final int startX = centerX - tableWidth / 2;
 		final int startY = 20;
+		final int colorWhite = 0xFFFFFFFF;
 
 		final MutableText noDataTxt = Text.translatable("shadowtrace.screen.summary.no_data");
 		final MutableText itemTxt = Text.translatable("shadowtrace.screen.summary.item");
 		final MutableText minedTxt = Text.translatable("shadowtrace.screen.summary.mined");
-		
+
 		final int centerTextX = centerX - (textRenderer.getWidth(noDataTxt) / 2);
 
 		if (DataManager.getBlocks().isEmpty()) {
-			context.drawText(this.textRenderer, noDataTxt, centerTextX, startY, 0xFF0000, true);
+			context.drawText(this.textRenderer, noDataTxt, centerTextX, startY, colorWhite, true);
 		} else {
 			final List<String> sortedBlockNames = new ArrayList<>(DataManager.getBlocks().keySet());
 			Collections.sort(sortedBlockNames);
 
 			btnReset.setPosition(startX + tableWidth - 122, startY - 8);
-			context.drawText(this.textRenderer, itemTxt, startX, startY, 0xFFFFFF, true);
-			context.drawText(this.textRenderer, minedTxt, startX + 260, startY, 0xFFFFFF, true);
+			context.drawText(this.textRenderer, itemTxt, startX, startY, colorWhite, true);
+			context.drawText(this.textRenderer, minedTxt, startX + 260, startY, colorWhite, true);
 
 			int yOffset = 20;
 			int textHeight = this.textRenderer.fontHeight;
@@ -90,8 +89,8 @@ public class SummaryScreen extends Screen {
 				final ItemStack itemStack = new ItemStack(item);
 				context.drawItem(itemStack, startX, y - 4);
 
-				context.drawText(this.textRenderer, formattedName, startX + 20, y, 0xFFFFFF, true);
-				context.drawText(this.textRenderer, String.valueOf(entry.getBroken()), startX + 260, y, 0xFFFFFF, true);
+				context.drawText(this.textRenderer, formattedName, startX + 20, y, colorWhite, true);
+				context.drawText(this.textRenderer, String.valueOf(entry.getBroken()), startX + 260, y, colorWhite, true);
 
 				final ButtonWidget buttonWidget = buttonWidgets.get(blockName);
 				if (buttonWidget != null) {
@@ -101,6 +100,8 @@ public class SummaryScreen extends Screen {
 				i++;
 			}
 		}
+
+		super.render(context, mouseX, mouseY, delta);
 	}
 
 	private String formatName(String input) {

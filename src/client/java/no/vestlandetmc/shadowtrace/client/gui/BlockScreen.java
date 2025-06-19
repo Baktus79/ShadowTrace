@@ -58,15 +58,14 @@ public class BlockScreen extends Screen {
 
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-		super.render(context, mouseX, mouseY, delta);
-
 		final int centerX = this.width / 2;
 		final int tableWidth = 580;
 		final int startX = centerX - tableWidth / 2;
 		final int startY = 20;
+		final int colorWhite = 0xFFFFFFFF;
 
-		context.drawText(this.textRenderer, Text.translatable("shadowtrace.screen.blockdata.time"), startX, startY, 0xFFFFFF, true);
-		context.drawText(this.textRenderer, Text.translatable("shadowtrace.screen.blockdata.coordinate"), startX + 130, startY, 0xFFFFFF, true);
+		context.drawText(this.textRenderer, Text.translatable("shadowtrace.screen.blockdata.time"), startX, startY, colorWhite, true);
+		context.drawText(this.textRenderer, Text.translatable("shadowtrace.screen.blockdata.coordinate"), startX + 130, startY, colorWhite, true);
 
 		int yOffset = 20;
 		int textHeight = this.textRenderer.fontHeight;
@@ -96,8 +95,8 @@ public class BlockScreen extends Screen {
 				final int rowColor = isHovered ? 0x80727271 : (i % 2 == 0 ? 0x80444444 : 0x80555555);
 				context.fill(startX - 2, y - verticalPadding, startX + tableWidth, y + yOffset - verticalPadding, rowColor);
 
-				context.drawText(this.textRenderer, time, startX, y, 0xFFFFFF, true);
-				context.drawText(this.textRenderer, coordinate, startX + 130, y, 0xFFFFFF, true);
+				context.drawTextWithShadow(this.textRenderer, time, startX, y, colorWhite);
+				context.drawTextWithShadow(this.textRenderer, coordinate, startX + 130, y, colorWhite);
 
 				final ButtonWidget buttonWidget = buttonWidgets.get(blockPos);
 				if (buttonWidget != null) {
@@ -111,6 +110,8 @@ public class BlockScreen extends Screen {
 			}
 			i++;
 		}
+
+		super.render(context, mouseX, mouseY, delta);
 	}
 
 	@Override
@@ -140,7 +141,7 @@ public class BlockScreen extends Screen {
 
 		if (client != null && client.player != null) {
 			final String teleportCommand = "shadowtrace teleport " + blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ();
-			client.player.networkHandler.sendCommand(teleportCommand);
+			client.player.networkHandler.sendChatCommand(teleportCommand);
 		}
 	}
 }
