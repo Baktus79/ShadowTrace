@@ -7,8 +7,14 @@ plugins {
 version = project.mod_version
 group = project.maven_group
 
+def archiveName = project.archives_base_name
+def modVersion = project.version
+def mcVersion = project.minecraft_version
+def loaderVersion = project.loader_version
+def fabricVersion = project.fabric_version
+
 base {
-    archivesName.set(project.archives_base_name)
+    archivesName.set(archiveName)
 }
 
 loom {
@@ -36,16 +42,18 @@ dependencies {
 }
 
 processResources {
-    inputs.property("version", project.version)
-    inputs.property("minecraft_version", project.minecraft_version)
-    inputs.property("loader_version", project.loader_version)
+    inputs.property("version", modVersion)
+    inputs.property("minecraft_version", mcVersion)
+    inputs.property("loader_version", loaderVersion)
+    inputs.property("fabric_version", fabricVersion)
     filteringCharset = "UTF-8"
 
     filesMatching("fabric.mod.json") {
         expand(
-                "version": project.version,
-                "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
+                "version": modVersion,
+                "minecraft_version": mcVersion,
+                "loader_version": loaderVersion,
+                "fabric_version": fabricVersion
         )
     }
 }
@@ -75,7 +83,7 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archives_base_name}" }
+        rename { "${it}_${archiveName}" }
     }
 }
 
