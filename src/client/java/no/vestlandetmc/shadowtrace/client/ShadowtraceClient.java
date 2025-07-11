@@ -15,7 +15,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
 import no.vestlandetmc.shadowtrace.client.gui.SummaryScreen;
 import no.vestlandetmc.shadowtrace.client.handlers.Block;
-import no.vestlandetmc.shadowtrace.client.handlers.Colors;
+import no.vestlandetmc.shadowtrace.client.handlers.BlockColorManager;
 import no.vestlandetmc.shadowtrace.client.handlers.DataManager;
 import no.vestlandetmc.shadowtrace.client.network.ReceiveBlockData;
 import no.vestlandetmc.shadowtrace.client.renders.DrawBox;
@@ -32,6 +32,8 @@ public class ShadowtraceClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
+		BlockColorManager.load();
+		
 		WorldRenderEvents.LAST.register(context -> {
 			final MatrixStack matrixStack = context.matrixStack();
 			final MinecraftClient client = MinecraftClient.getInstance();
@@ -50,7 +52,7 @@ public class ShadowtraceClient implements ClientModInitializer {
 				final int locZ = Integer.parseInt(blockData[3]);
 				final String name = blockData[4];
 				final long timestamp = Long.parseLong(blockData[5]);
-				final Colors color = Colors.fromStringOrDefault(name);
+				final int color = BlockColorManager.getColor(name);
 				final BlockPos blockPos = new BlockPos(locX, locY, locZ);
 				final Block block;
 

@@ -11,10 +11,10 @@ public class Block {
 	private final HashMap<BlockPos, Long> blockPositions = new HashMap<>();
 	private final String world;
 	private final String name;
-	private final Colors color;
+	private final int color;
 
 
-	public Block(String world, String name, Colors color) {
+	public Block(String world, String name, int color) {
 		this.world = world;
 		this.name = name;
 		this.color = color;

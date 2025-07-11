@@ -35,7 +35,7 @@ public class DrawBox {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		for (Map.Entry<String, Block> s : DataManager.getBlocks().entrySet()) {
-			final int color = s.getValue().getColor().getHexCode();
+			final int color = s.getValue().getColor();
 			final HashMap<BlockPos, Long> blockPositions = s.getValue().getBlockPositions();
 
 			blockPositions.entrySet().stream().filter(e -> isInsideSquare(e.getKey(), client.player)).forEach(e -> {
