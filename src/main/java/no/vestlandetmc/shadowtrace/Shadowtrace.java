@@ -6,6 +6,6 @@ public class Shadowtrace implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-        
+
 	}
 }

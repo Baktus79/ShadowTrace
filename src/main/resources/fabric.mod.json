@@ -19,6 +19,9 @@
       "no.vestlandetmc.shadowtrace.Shadowtrace"
     ]
   },
+  "mixins": [
+    "shadowtrace.client.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": ">=${fabric_version}",

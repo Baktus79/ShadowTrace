@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "no.vestlandetmc.shadowtrace.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "client-ShadowTrace-refmap.json",
+  "client": [
+    "WorldRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

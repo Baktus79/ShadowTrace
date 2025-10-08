@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class DrawBox {
 
-	public static void initialize(MatrixStack matrixStack, MinecraftClient client) {
+	public static void initialize(MatrixStack matrixStack, MinecraftClient client, VertexConsumerProvider.Immediate vcp) {
 		if (client.world == null || client.player == null || DataManager.getBlocks().isEmpty()) return;
 
 		final Camera camera = client.gameRenderer.getCamera();

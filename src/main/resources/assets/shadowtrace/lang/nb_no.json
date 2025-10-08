@@ -1,5 +1,6 @@
 {
-  "shadowtrace.keybind": "Blokksammendrag",
+  "shadowtrace.keybind.block-summary": "Blokksammendrag",
+  "key.categories.shadowtrace.shadowtrace": "ShadowTrace",
   "shadowtrace.screen.summary.title": "Blokksammendrag",
   "shadowtrace.screen.summary.btn_reset_blocks": "Resett blokker",
   "shadowtrace.screen.summary.btn_blocks": "Blokker",

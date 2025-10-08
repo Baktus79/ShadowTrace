@@ -1,5 +1,6 @@
 {
-  "shadowtrace.keybind": "Block Summary",
+  "shadowtrace.keybind.block-summary": "Block Summary",
+  "key.category.shadowtrace.shadowtrace": "ShadowTrace",
   "shadowtrace.screen.summary.title": "Block Summary",
   "shadowtrace.screen.summary.btn_reset_blocks": "Reset Blocks",
   "shadowtrace.screen.summary.btn_blocks": "Blocks",

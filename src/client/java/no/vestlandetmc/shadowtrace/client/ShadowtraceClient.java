@@ -5,20 +5,18 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import no.vestlandetmc.shadowtrace.client.gui.SummaryScreen;
 import no.vestlandetmc.shadowtrace.client.handlers.Block;
 import no.vestlandetmc.shadowtrace.client.handlers.BlockColorManager;
 import no.vestlandetmc.shadowtrace.client.handlers.DataManager;
 import no.vestlandetmc.shadowtrace.client.network.ReceiveBlockData;
-import no.vestlandetmc.shadowtrace.client.renders.DrawBox;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +31,14 @@ public class ShadowtraceClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		BlockColorManager.load();
-		
+
+		/*
 		WorldRenderEvents.LAST.register(context -> {
 			final MatrixStack matrixStack = context.matrixStack();
 			final MinecraftClient client = MinecraftClient.getInstance();
 			DrawBox.initialize(matrixStack, client);
 		});
+		 */
 
 		PayloadTypeRegistry.playS2C().register(ReceiveBlockData.ID, ReceiveBlockData.CODEC);
 		ClientPlayNetworking.registerGlobalReceiver(ReceiveBlockData.ID, (payload, context) -> context.client().execute(() -> {
@@ -76,11 +76,12 @@ public class ShadowtraceClient implements ClientModInitializer {
 			}
 		});
 
+		final KeyBinding.Category keyCategory = KeyBinding.Category.create(Identifier.of("shadowtrace", "shadowtrace"));
 		keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-				"shadowtrace.keybind",
+				"shadowtrace.keybind.block-summary",
 				InputUtil.Type.KEYSYM,
 				GLFW.GLFW_KEY_G,
-				"ShadowTrace"));
+				keyCategory));
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			while (keyBinding.wasPressed()) {
