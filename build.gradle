@@ -12,6 +12,7 @@ def modVersion = project.version
 def mcVersion = project.minecraft_version
 def loaderVersion = project.loader_version
 def fabricVersion = project.fabric_version
+def yarnVersion = project.yarn_mappings
 
 base {
     archivesName.set(archiveName)
@@ -46,6 +47,7 @@ processResources {
     inputs.property("minecraft_version", mcVersion)
     inputs.property("loader_version", loaderVersion)
     inputs.property("fabric_version", fabricVersion)
+    inputs.property("yarn_mappings", yarnVersion)
     filteringCharset = "UTF-8"
 
     filesMatching("fabric.mod.json") {
@@ -53,7 +55,8 @@ processResources {
                 "version": modVersion,
                 "minecraft_version": mcVersion,
                 "loader_version": loaderVersion,
-                "fabric_version": fabricVersion
+                "fabric_version": fabricVersion,
+                "yarn_mappings": yarnVersion
         )
     }
 }

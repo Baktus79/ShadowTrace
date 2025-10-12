@@ -12,6 +12,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import no.vestlandetmc.shadowtrace.client.handlers.Block;
 import no.vestlandetmc.shadowtrace.client.handlers.DataManager;
+import no.vestlandetmc.shadowtrace.client.render.RenderBudget;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
@@ -26,33 +27,35 @@ public class DrawBox {
 		final Camera camera = client.gameRenderer.getCamera();
 		final Vec3d cameraPos = camera.getPos();
 
-		VertexConsumerProvider.Immediate consumers = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
 		RenderLayer layer = RenderLayer.getLines();
-		VertexConsumer consumer = consumers.getBuffer(layer);
+		VertexConsumer consumer = vcp.getBuffer(layer);
 
 		GL11.glDepthMask(false);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 
 		for (Map.Entry<String, Block> s : DataManager.getBlocks().entrySet()) {
-			final int color = s.getValue().getColor();
+			int color = s.getValue().getColor();
 			final HashMap<BlockPos, Long> blockPositions = s.getValue().getBlockPositions();
+			color |= 0xFF000000;
 
+			int finalColor = color;
 			blockPositions.entrySet().stream().filter(e -> isInsideSquare(e.getKey(), client.player)).forEach(e -> {
 				final double x = e.getKey().getX() - cameraPos.x;
 				final double y = e.getKey().getY() - cameraPos.y;
 				final double z = e.getKey().getZ() - cameraPos.z;
 				final Box bb = new Box(x, y, z, x + 1, y + 1, z + 1);
 
-				drawOutlineBox(matrixStack, consumer, bb, color);
+				if (!RenderBudget.canDraw(24)) {
+					GL11.glEnable(GL11.GL_DEPTH_TEST);
+					GL11.glEnable(GL11.GL_CULL_FACE);
+					GL11.glDepthMask(true);
+					return;
+				}
+
+				drawOutlineBox(matrixStack, consumer, bb, finalColor);
 			});
 		}
-
-		consumers.draw();
-
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glDepthMask(true);
 	}
 
 	private static void drawOutlineBox(MatrixStack matrices, VertexConsumer consumer, Box box, int color) {
